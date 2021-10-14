@@ -1,2 +1,3 @@
 # InvestOps
-Tools for investing in Python
+
+Stay tuned, coming soon to a [cinema](https://www.youtube.com/watch?v=MFqxdvggAxM) near you!
