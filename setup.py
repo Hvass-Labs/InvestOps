@@ -2,7 +2,7 @@
 from setuptools import setup
 
 # Also defined in investops/__init__.py and must be updated in both places.
-MY_VERSION = '0.0.1'
+MY_VERSION = '0.1.0'
 
 setup(
     name='investops',
@@ -17,10 +17,11 @@ setup(
     author_email='my-first-name@hvass-labs.org',
     url='https://github.com/Hvass-Labs/InvestOps',
     license='MIT',
-    keywords=['investing', 'portfolio optimization'],
+    keywords=['investing', 'portfolio optimization', 'hvass diversification'],
     install_requires=[
         'numpy',
         'pandas',
+        'numba',
     ],
 )
 
