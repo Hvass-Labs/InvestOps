@@ -21,18 +21,25 @@ from numba import jit
 
 
 @jit
-def fix_corr_matrix(corr):
+def fix_corr_matrix(corr, copy=True):
     """
     Repair a correlation matrix so it is symmetrical, limited between -1 and 1,
     and the diagonal elements are all 1. The upper-triangle is copied to the
-    lower-triangle. NaN values are set to zero. The data is updated inplace.
+    lower-triangle. NaN values are set to zero.
 
     :param corr:
         Numpy 2-dim array for the correlation matrix which is updated inplace.
 
+    :param copy:
+        Boolean whether to copy `corr` (True) or update `corr` inplace (False).
+
     :return:
         The same Numpy array as the `corr` input argument.
     """
+    # Update the data inplace or make a copy?
+    if copy:
+        corr = corr.copy()
+
     # Number of rows and columns.
     n = len(corr)
 

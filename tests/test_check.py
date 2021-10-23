@@ -125,7 +125,7 @@ def test_fix_corr_matrix():
     corr_correct = np.array([[1.0, 0.5, 0.3],
                              [0.5, 1.0, 0.2],
                              [0.3, 0.2, 1.0]])
-    corr_fixed = fix_corr_matrix(corr=corr)
+    corr_fixed = fix_corr_matrix(corr=corr, copy=True)
     assert_allclose(corr_fixed, corr_correct)
 
     # Test 2
@@ -135,7 +135,7 @@ def test_fix_corr_matrix():
     corr_correct = np.array([[1.0, -0.5, 0.3],
                              [-0.5, 1.0, -0.2],
                              [0.3, -0.2, 1.0]])
-    corr_fixed = fix_corr_matrix(corr=corr)
+    corr_fixed = fix_corr_matrix(corr=corr, copy=True)
     assert_allclose(corr_fixed, corr_correct)
 
     # Test 3
@@ -145,7 +145,7 @@ def test_fix_corr_matrix():
     corr_correct = np.array([[1.0, -0.5, 0.3],
                              [-0.5, 1.0, -0.2],
                              [0.3, -0.2, 1.0]])
-    corr_fixed = fix_corr_matrix(corr=corr)
+    corr_fixed = fix_corr_matrix(corr=corr, copy=True)
     assert_allclose(corr_fixed, corr_correct)
 
     # Test 4
@@ -155,7 +155,7 @@ def test_fix_corr_matrix():
     corr_correct = np.array([[1.0, -0.5, 0.3],
                              [-0.5, 1.0, -0.2],
                              [0.3, -0.2, 1.0]])
-    corr_fixed = fix_corr_matrix(corr=corr)
+    corr_fixed = fix_corr_matrix(corr=corr, copy=True)
     assert_allclose(corr_fixed, corr_correct)
 
     # Test 5
@@ -165,7 +165,20 @@ def test_fix_corr_matrix():
     corr_correct = np.array([[1.0, 1.0, 0.3],
                              [1.0, 1.0, -0.2],
                              [0.3, -0.2, 1.0]])
-    corr_fixed = fix_corr_matrix(corr=corr)
+    corr_fixed = fix_corr_matrix(corr=corr, copy=True)
+    assert_allclose(corr_fixed, corr_correct)
+
+    # Test 6
+    corr = np.array([[1.2, 3.5, 0.3],
+                     [-2.5, 1.5, -0.2],
+                     [-0.3, -0.3, 0.0]])
+    corr_correct = np.array([[1.0, 1.0, 0.3],
+                             [1.0, 1.0, -0.2],
+                             [0.3, -0.2, 1.0]])
+    corr_fixed = fix_corr_matrix(corr=corr, copy=False)
+    # Check corr has been updated inplace.
+    assert id(corr) == id(corr_fixed), 'Correlation matrix not updated inplace'
+    assert_allclose(corr, corr_correct)
     assert_allclose(corr_fixed, corr_correct)
 
 

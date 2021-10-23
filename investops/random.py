@@ -75,8 +75,8 @@ def rand_corr_uniform(rng, num_assets, min_corr=-1.0, max_corr=1.0):
     corr = rng.uniform(low=min_corr, high=max_corr,
                        size=(num_assets, num_assets))
 
-    # Ensure it is a valid correlation matrix.
-    fix_corr_matrix(corr)
+    # Ensure it is a valid correlation matrix. Repair the data inplace.
+    fix_corr_matrix(corr, copy=False)
 
     return corr
 
@@ -96,8 +96,8 @@ def rand_corr_normal(rng, num_assets, mean=0.0, std=0.2):
     # Generate random matrix.
     corr = rng.normal(scale=std, loc=mean, size=(num_assets, num_assets))
 
-    # Ensure it is a valid correlation matrix.
-    fix_corr_matrix(corr)
+    # Ensure it is a valid correlation matrix. Repair the data inplace.
+    fix_corr_matrix(corr, copy=False)
 
     return corr
 
