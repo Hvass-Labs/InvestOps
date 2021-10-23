@@ -83,6 +83,34 @@ def test_check_corr_matrix():
                          [0.3, -0.2]])
         check_corr_matrix(corr=corr)
 
+    # Test 9
+    with pytest.raises(ValueError):
+        corr = np.array([[1.0, np.nan, 0.3],
+                         [np.nan, 1.0, 0.2],
+                         [0.3, 0.2, 1.0]])
+        check_corr_matrix(corr=corr)
+
+    # Test 10
+    with pytest.raises(ValueError):
+        corr = np.array([[1.0, np.infty, 0.3],
+                         [np.infty, 1.0, 0.2],
+                         [0.3, 0.2, 1.0]])
+        check_corr_matrix(corr=corr)
+
+    # Test 11
+    with pytest.raises(ValueError):
+        corr = np.array([[np.nan, 0.5, 0.3],
+                         [0.5, 1.0, 0.2],
+                         [0.3, 0.2, 1.0]])
+        check_corr_matrix(corr=corr)
+
+    # Test 12
+    with pytest.raises(ValueError):
+        corr = np.array([[np.inf, 0.5, 0.3],
+                         [0.5, 1.0, 0.2],
+                         [0.3, 0.2, 1.0]])
+        check_corr_matrix(corr=corr)
+
 
 ###############################################################################
 # fix_corr_matrix()

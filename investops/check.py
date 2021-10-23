@@ -101,19 +101,34 @@ def check_corr_matrix(corr, tol=1e-9):
 
     # For each row in the correlation matrix.
     for i in range(n):
+        # Get diagonal of the matrix.
+        corr_ii = corr[i, i]
+
+        # Check the diagonal is not NaN (Not-a-Number) or Infinity.
+        if np.isnan(corr_ii) or np.isinf(corr_ii):
+            raise ValueError('Correlation matrix has NaN or Infinity.')
+
         # Check the diagonal is 1.
-        if np.abs(corr[i, i] - 1.0) > tol:
+        if np.abs(corr_ii - 1.0) > tol:
             raise ValueError('Correlation matrix diagonal is not 1.')
 
         # For each column after the diagonal.
         for j in range(i + 1, n):
+            # Get elements from the correlation matrix.
+            corr_ij = corr[i, j]
+            corr_ji = corr[j, i]
+
+            # Check the correlations are not NaN (Not-a-Number) or Infinity.
+            if np.isnan(corr_ij) or np.isinf(corr_ij):
+                raise ValueError('Correlation matrix has NaN or Infinity.')
+
             # Check the correlations are between -1 and 1.
-            if (corr[i, j] < -1.0 - tol) or (corr[i, j] > 1.0 + tol):
+            if (corr_ij < -1.0 - tol) or (corr_ij > 1.0 + tol):
                 msg = 'Correlation matrix has element outside range [-1,1].'
                 raise ValueError(msg)
 
             # Check the matrix is symmetrical.
-            if np.abs(corr[i, j] - corr[j, i]) > tol:
+            if np.abs(corr_ij - corr_ji) > tol:
                 raise ValueError('Correlation matrix is not symmetrical.')
 
 
