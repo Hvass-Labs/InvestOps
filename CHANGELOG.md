@@ -1,5 +1,12 @@
 # Changes to the InvestOps Python package
 
+## Version 0.2.0 (2021-???)
+
+Added the following features:
+
+- Functions for removing zero/small portfolio weights (`remove_weights.py`)
+
+
 ## Version 0.1.0 (2021-10-23)
 
 First beta version with the following features:
