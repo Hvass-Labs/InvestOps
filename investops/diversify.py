@@ -341,9 +341,9 @@ def mse_full_exposure(weights_new, weights_org, corr):
 @jit(parallel=False)
 def _update_weights(weights_org, weights_new, corr):
     """
-    Helper-function for the function `adjust_weights` which performs a single
-    update of the portfolio weights, using the algorithm from Section 8.8 of
-    the paper referenced above.
+    Helper-function for the function `diversify_weights` which performs
+    a single update of the portfolio weights, using the algorithm from
+    Section 8.8 of the paper referenced above.
 
     :param weights_org:
         Numpy array with the original portfolio weights.
@@ -546,7 +546,7 @@ def diversify_weights(weights_org, corr, weights_guess=None, fix_input=True,
         if max_abs_dif < tol:
             break
 
-    # Check that the we have converged to a sufficiently good solution.
+    # Check that we have converged to a sufficiently good solution.
     _check_convergence(max_abs_dif=max_abs_dif, tol=tol)
 
     # Check that the original and new portfolio weights are consistent.
