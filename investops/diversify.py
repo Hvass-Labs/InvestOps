@@ -596,14 +596,15 @@ def log_to_dataframe(weights_org, corr, log):
     for weights_new in log_weights:
         # Calculate the Full Exposure of the logged weights.
         fe = full_exposure(weights=weights_new, corr=corr)
+
         # Save the results.
         log_full_exp.append(fe)
 
         # Calculate the Mean Squared Error (MSE).
-        _mse = mse_full_exposure(weights_new=weights_new,
-                                 weights_org=weights_org, corr=corr)
+        mse = np.mean((fe - weights_org) ** 2)
+
         # Save the results.
-        log_mse.append(_mse)
+        log_mse.append(mse)
 
     # Combine the arrays of adjusted weights and Full Exposure, so that:
     # 1st column is for 1st weights, 2nd column is for 1st Full Exposure.
