@@ -103,3 +103,22 @@ def rand_corr_normal(rng, num_assets, mean=0.0, std=0.2):
 
 
 ###############################################################################
+
+
+def rand_zero(rng, a, prob):
+    """
+    Randomly set values of a Numpy array to zero according to a probability.
+
+    :param rng: `Numpy.random.Generator` object from `np.random.default_rng()`
+    :param a: Numpy array which is copied and NOT updated inplace.
+    :param prob: Float with the probability that an element is set to zero.
+    :return: A new Numpy array of the same shame as `a`.
+    """
+    # Array with random values between [0,1].
+    p = rng.uniform(size=a.shape)
+
+    # Create a copy of the input array where random values are set to zero.
+    return np.where(p < prob, 0, a)
+
+
+###############################################################################
