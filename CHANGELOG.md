@@ -4,6 +4,7 @@
 
 Added the following features:
 
+- Functions for sparse matrices (`sparse.py`)
 - Functions for removing zero/small portfolio weights (`remove_weights.py`)
 
 
