@@ -7,6 +7,10 @@ Added the following features:
 - Functions for sparse matrices (`sparse.py`)
 - Functions for removing zero/small portfolio weights (`remove_weights.py`)
 
+Fixes:
+
+- Parallel "race condition" in function `diversify._update_weights`
+
 
 ## Version 0.1.0 (2021-10-23)
 

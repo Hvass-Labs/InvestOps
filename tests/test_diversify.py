@@ -143,7 +143,7 @@ def test_diversify_weights():
                      [0.5, 1.0, 0.3],
                      [0.2, 0.3, 1.0]])
     weights_new = diversify_weights(weights_org=weights_org, corr=corr)
-    assert_allclose(weights_new, [0.07583307, 0.17872171, 0.29059295])
+    assert_allclose(weights_new, [0.07589274, 0.17863085, 0.29059378])
 
     # Test 5
     weights_org = np.array([0.1, 0.2, -0.3])
@@ -151,7 +151,7 @@ def test_diversify_weights():
                      [0.5, 1.0, -0.3],
                      [0.2, -0.3, 1.0]])
     weights_new = diversify_weights(weights_org=weights_org, corr=corr)
-    assert_allclose(weights_new, [ 0.08018941,  0.17818552, -0.29208873])
+    assert_allclose(weights_new, [0.08023448,  0.17813341, -0.29209408])
 
     # Test 6
     weights_org = np.array([-0.1, 0.2, -0.3])
@@ -161,7 +161,7 @@ def test_diversify_weights():
                      [0.2, -0.3, 1.0]])
     weights_new = diversify_weights(weights_org=weights_org, corr=corr,
                                     weights_guess=weights_guess)
-    assert_allclose(weights_new, [-0.07583148,  0.17871272, -0.29059354])
+    assert_allclose(weights_new, [-0.07581472, 0.178671, -0.29059834])
 
 
 def test_diversify_weights_rand():

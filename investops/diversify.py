@@ -345,6 +345,9 @@ def _update_weights(weights_org, weights_new, corr):
     a single update of the portfolio weights, using the algorithm from
     Section 8.8 of the paper referenced above.
 
+    WARNING: This should NOT be run in parallel with Numba Jit because there
+    is a "race condition" in the for-loop that would corrupt the results.
+
     :param weights_org:
         Numpy array with the original portfolio weights.
 
@@ -359,53 +362,29 @@ def _update_weights(weights_org, weights_new, corr):
         and the original portfolio weights. This is used to abort the outer
         algorithm's for-loop when sufficiently good weights have been found.
     """
-    # Number of portfolio weights.
-    n = len(weights_org)
+    # This could be implemented entirely with Numpy, but would need special
+    # handling in case the Full Exposure is zero for some assets. This is a
+    # slightly cleaner implementation that is also faster with Numba jit.
+
+    # Calculate the Full Exposure for all the portfolio weights.
+    # This function can be run in parallel if enabled by the function.
+    full_exp = full_exposure(weights=weights_new, corr=corr)
 
     # Init. max abs difference between the Full Exposure and original weights.
     max_abs_dif = 0.0
 
-    # For each asset i in the portfolio.
-    # Note the use of prange() instead of range() which instructs Numba Jit
-    # to parallelize this loop, but only if @jit(parallel=True) was used,
-    # otherwise this just becomes the ordinary Python for-loop using range().
+    # Number of portfolio weights.
+    n = len(weights_org)
+
+    # For each portfolio weight.
     # WARNING! There is a "race condition" when this loop is run in parallel,
-    # because the weights_new array is both read and written inside the loop,
-    # but the algorithm can handle this for the same reason that it converges
-    # to the correct solution, as was proven in the paper referenced above.
-    for i in prange(n):
-        # The new and original portfolio weights of asset i.
-        w_new_i = weights_new[i]
+    # because the variable max_abs_dif is read and written by all the threads.
+    for i in range(n):
+        # Original weight for asset i.
         w_org_i = weights_org[i]
 
-        # First we need to calculate the Full Exposure of asset i.
-
-        # Initialize the sum of correlated exposures.
-        sum_corr_exp = 0.0
-
-        # For each other asset j in the portfolio.
-        for j in range(n):
-            # Portfolio weight of asset j.
-            w_new_j = weights_new[j]
-
-            # Correlation between assets i and j.
-            c = corr[i, j]
-
-            # Product of the two asset weights and their correlation.
-            prod = w_new_i * w_new_j * c
-
-            # If the product is positive then the correlation is deemed "bad"
-            # and must be included in the calculation of the Full Exposure,
-            # so the two portfolio weights can be adjusted accordingly.
-            if prod > 0.0:
-                # Multiply with the correlation again, because otherwise the
-                # square-root calculated below would amplify the correlation.
-                # Because this can result in a negative number, we also need
-                # to take the absolute value.
-                sum_corr_exp += np.abs(prod * c)
-
         # Full Exposure for asset i.
-        full_exp_i = np.sign(w_new_i) * np.sqrt(sum_corr_exp)
+        full_exp_i = full_exp[i]
 
         # If the Full Exposure is non-zero.
         if full_exp_i != 0.0:
