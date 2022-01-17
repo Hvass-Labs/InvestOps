@@ -34,7 +34,7 @@ def fix_corr_matrix(corr, copy=True):
         Boolean whether to copy `corr` (True) or update `corr` inplace (False).
 
     :return:
-        The same Numpy array as the `corr` input argument.
+        Numpy array with the repaired correlation matrix.
     """
     # Update the data inplace or make a copy?
     if copy:
