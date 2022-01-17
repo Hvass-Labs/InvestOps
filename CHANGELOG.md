@@ -1,6 +1,6 @@
 # Changes to the InvestOps Python package
 
-## Version 0.2.0 (2021-???)
+## Version 0.2.0 (2021-01-17)
 
 Added the following features:
 

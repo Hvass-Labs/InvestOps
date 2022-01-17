@@ -2,7 +2,7 @@
 from setuptools import setup
 
 # Also defined in investops/__init__.py and must be updated in both places.
-MY_VERSION = '0.1.0'
+MY_VERSION = '0.2.0'
 
 setup(
     name='investops',
