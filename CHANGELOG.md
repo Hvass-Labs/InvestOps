@@ -1,8 +1,15 @@
 # Changes to the InvestOps Python package
 
+## Version 0.3.0 (2022-02-???)
+
+Moved:
+
+- `diversify._check_weights` to `check.check_weights`
+
+
 ## Version 0.2.0 (2022-01-17)
 
-Added the following features:
+New features:
 
 - Portfolio diversification for sparse corr. matrix (`diversify_sparse.py`)
 - Functions for sparse matrices (`sparse.py`)

@@ -23,8 +23,9 @@
 import numpy as np
 import pandas as pd
 from numba import jit
-from investops.diversify import _check_convergence, _check_weights
+from investops.diversify import _check_convergence
 from investops.sparse import sparse_corr_to_numpy
+from investops.check import check_weights
 
 ###############################################################################
 # Helper functions.
@@ -414,7 +415,7 @@ def diversify_weights_sparse(weights_org, corr_i, corr_j, corr_coef,
     _check_convergence(max_abs_dif=max_abs_dif, tol=tol)
 
     # Check that the original and new portfolio weights are consistent.
-    _check_weights(weights_org=weights_org, weights_new=weights_new)
+    check_weights(weights_org=weights_org, weights_new=weights_new)
 
     # If the input weights_org was Pandas data, then also output Pandas data.
     if index is not None:

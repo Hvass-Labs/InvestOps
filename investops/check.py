@@ -140,3 +140,79 @@ def check_corr_matrix(corr, tol=1e-9):
 
 
 ###############################################################################
+# Check portfolio weights.
+
+@jit
+def _check_weights(weights_org, weights_new):
+    """
+    Helper-function for the `check_weights` function which returns the index
+    of the first problem for the portfolio weights. Runs fast with Numba Jit.
+
+    :param weights_new:
+        Numpy array with the new asset-weights.
+
+    :param weights_org:
+        Numpy array with the original asset-weights.
+
+    :return:
+        `None` if no problems were found.
+         Otherwise an integer with the index of the first problem.
+    """
+    # Number of weights.
+    n = len(weights_new)
+
+    # For each weight index.
+    for i in range(n):
+        # Get the weights.
+        w_new = weights_new[i]
+        w_org = weights_org[i]
+
+        # Check if there is a problem and then return the corresponding index.
+        # We must ensure the weight signs are equal and magnitudes are valid.
+        # But because np.sign(0.0)==0.0 the check for signs is a bit awkward.
+        if (np.sign(w_new) != 0.0 and np.sign(w_new) != np.sign(w_org)) or \
+                (np.abs(w_new) > np.abs(w_org)):
+            return i
+
+    # No problems were found.
+    return None
+
+
+def check_weights(weights_org, weights_new):
+    """
+    Check that the original and new portfolio weights are consistent.
+    They must have the same sign, and the absolute values of the new weights
+    must be smaller than the absolute values of the original weights:
+
+    (1)     sign(weights_new[i]) == sign(weights_org[i])
+    (2)     abs(weights_new[i]) <= abs(weights_org[i])
+
+    This function only takes 3.5 micro-seconds to run for 1000 weights using a
+    Numba Jit implementation. A Numpy implementation would be much slower. But
+    it must be split into two functions, because Numba Jit does not properly
+    support the string operations used to generate the exception.
+
+    :param weights_new:
+        Numpy array with the new asset-weights.
+
+    :param weights_org:
+        Numpy array with the original asset-weights.
+
+    :raises:
+        `RuntimeError` if the weights are inconsistent.
+
+    :return:
+        None
+    """
+    # Get index of the first problem / inconsistency of the weights.
+    idx = _check_weights(weights_org=weights_org, weights_new=weights_new)
+
+    # If a problem was found then raise an exception.
+    if idx is not None:
+        msg = f'Checking the weights failed at: i={idx}, ' + \
+              f'weights_new[i]={weights_new[idx]:.2e}, ' + \
+              f'weights_org[i]={weights_org[idx]:.2e}'
+        raise RuntimeError(msg)
+
+
+###############################################################################
