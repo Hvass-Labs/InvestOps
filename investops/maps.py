@@ -49,7 +49,7 @@ class LinearMap:
         :param y2_fill:
             Right boundary for linear mapping: If `x > x2` then `y = y2_fill`.
             If `None` then continue the linear mapping beyond `x2`.
-        :raises
+        :raises:
             `TypeError`: An argument is of the wrong type.
             `ValueError`: An argument has an invalid value.
         """
