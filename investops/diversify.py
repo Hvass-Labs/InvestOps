@@ -160,10 +160,10 @@ def full_exposure(weights, corr):
     with for-loops instead of Numpy arrays, means that it avoids new memory
     allocations for large n^2 matrices, so the machine-code is very fast.
 
-    For large portfolios of e.g. 1000 assets or more, this can run even faster
-    by using `@jit(parallel=True)` as the function decorator. But for smaller
-    portfolios of only e.g. 100 assets, the parallelization overhead makes it
-    run a bit slower, so you have to turn on the parallelism manually.
+    The parallel version of this function is named `full_exposure_par` which
+    can run even faster for large portfolios of e.g. 1000 assets or more.
+    But for smaller portfolios of only e.g. 100 assets, the parallel overhead
+    makes it run a bit slower, so you should test which is fastest for you.
 
     Note that the arguments must be Python lists or Numpy arrays and cannot be
     Pandas Series and DataFrames, because Numba Jit does not support Pandas.
@@ -229,6 +229,10 @@ def full_exposure(weights, corr):
     return full_exp
 
 
+# Parallel Numba Jit version of the function `full_exposure`.
+full_exposure_par = jit(full_exposure.py_func, parallel=True)
+
+
 ###############################################################################
 # Mean Squared Error.
 
@@ -265,7 +269,7 @@ def mse_full_exposure(weights_new, weights_org, corr):
 # Adjust portfolio weights using custom algorithm.
 
 @jit(parallel=False)
-def _update_weights(weights_org, weights_new, corr):
+def _update_weights(weights_org, weights_new, corr, parallel=False):
     """
     Helper-function for the function `diversify_weights` which performs
     a single update of the portfolio weights, using the algorithm from
@@ -283,6 +287,10 @@ def _update_weights(weights_org, weights_new, corr):
     :param corr:
         Numpy 2-dim array with the correlation matrix.
 
+    :param parallel:
+        Boolean whether to use the parallel (True) or serial (False) version
+        of the function `full_exposure`.
+
     :return:
         Float with the max absolute difference between the Full Exposure
         and the original portfolio weights. This is used to abort the outer
@@ -293,8 +301,12 @@ def _update_weights(weights_org, weights_new, corr):
     # slightly cleaner implementation that is also faster with Numba jit.
 
     # Calculate the Full Exposure for all the portfolio weights.
-    # This function can be run in parallel if enabled by the function.
-    full_exp = full_exposure(weights=weights_new, corr=corr)
+    if parallel:
+        # Parallel execution.
+        full_exp = full_exposure_par(weights=weights_new, corr=corr)
+    else:
+        # Serial execution.
+        full_exp = full_exposure(weights=weights_new, corr=corr)
 
     # Init. max abs difference between the Full Exposure and original weights.
     max_abs_dif = 0.0
@@ -326,7 +338,7 @@ def _update_weights(weights_org, weights_new, corr):
 
 
 def diversify_weights(weights_org, corr, weights_guess=None, fix_input=True,
-                      log=None, max_iter=100, tol=1e-3):
+                      parallel=False, log=None, max_iter=100, tol=1e-3):
     """
     Find new asset-weights that minimize the Mean Squared Error (MSE) between
     the original asset-weights and the Full Exposure of the new asset-weights,
@@ -362,6 +374,11 @@ def diversify_weights(weights_org, corr, weights_guess=None, fix_input=True,
     :param fix_input:
         Boolean whether to repair input by filling NaN-values (Not-a-Number)
         in `weights_org` and `weights_guess`, and various repairs to `corr`.
+
+    :param parallel:
+        Boolean whether to use the parallel (True) or serial (False) version
+        of the function `full_exposure`. Whether the parallel version is faster
+        depends on your problem, so you should test which is fastest for you.
 
     :param log:
         If this is a list-like object then it will have its function `append`
@@ -439,7 +456,8 @@ def diversify_weights(weights_org, corr, weights_guess=None, fix_input=True,
     for i in range(max_iter):
         # Update the array weights_new inplace.
         max_abs_dif = _update_weights(weights_org=weights_org,
-                                      weights_new=weights_new, corr=corr)
+                                      weights_new=weights_new,
+                                      corr=corr, parallel=parallel)
 
         # Log the updated weights?
         if log is not None:

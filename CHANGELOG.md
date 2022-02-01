@@ -2,6 +2,10 @@
 
 ## Version 0.3.0 (2022-02-???)
 
+Changes:
+
+- Selection of parallel vs. serial execution in `diversify.py`
+
 Moved:
 
 - `diversify._check_weights` to `check.check_weights`
