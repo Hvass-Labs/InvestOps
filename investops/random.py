@@ -179,19 +179,30 @@ def rand_where(rng, x, y, prob):
     Randomly return elements chosen from `x` or `y` depending on probability.
 
     :param rng: `Numpy.random.Generator` object from `np.random.default_rng()`
-    :param x: Numpy array which is copied and NOT updated inplace.
+    :param x: Numpy or Pandas array which is copied and NOT updated inplace.
     :param y: Other Numpy array or scalar value.
     :param prob:
         Float in [0,1] with probability of using values from `x` or `y`.
         A `prob` value of 0.0 always selects values from `x`, and
         a `prob` value of 1.0 always selects value from `y`.
-    :return: A new Numpy array of the same shape as `x`.
+    :return: A new Numpy or Pandas array of the same shape as `x`.
     """
     # Array with random values between [0,1].
     p = rng.uniform(size=x.shape)
 
     # Create a copy of the array x where random values are set to y.
-    return np.where(prob < p, x, y)
+    # This is always a Numpy array even if x was Pandas data.
+    x_new = np.where(prob < p, x, y)
+
+    # Convert result back to Pandas?
+    if isinstance(x, pd.Series):
+        # Convert result to Pandas Series.
+        x_new = pd.Series(data=x_new, index=x.index)
+    elif isinstance(x, pd.DataFrame):
+        # Convert result to Pandas DataFrame.
+        x_new = pd.DataFrame(data=x_new, index=x.index, columns=x.columns)
+
+    return x_new
 
 
 def rand_zero(rng, x, prob):
