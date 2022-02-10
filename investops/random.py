@@ -174,20 +174,36 @@ def rand_corr_normal(rng, num_assets, mean=0.0, std=0.2):
 
 ###############################################################################
 
-def rand_zero(rng, a, prob):
+def rand_where(rng, x, y, prob):
+    """
+    Randomly return elements chosen from `x` or `y` depending on probability.
+
+    :param rng: `Numpy.random.Generator` object from `np.random.default_rng()`
+    :param x: Numpy array which is copied and NOT updated inplace.
+    :param y: Other Numpy array or scalar value.
+    :param prob:
+        Float in [0,1] with probability of using values from `x` or `y`.
+        A `prob` value of 0.0 always selects values from `x`, and
+        a `prob` value of 1.0 always selects value from `y`.
+    :return: A new Numpy array of the same shape as `x`.
+    """
+    # Array with random values between [0,1].
+    p = rng.uniform(size=x.shape)
+
+    # Create a copy of the array x where random values are set to y.
+    return np.where(prob < p, x, y)
+
+
+def rand_zero(rng, x, prob):
     """
     Randomly set values of a Numpy array to zero according to a probability.
 
     :param rng: `Numpy.random.Generator` object from `np.random.default_rng()`
-    :param a: Numpy array which is copied and NOT updated inplace.
+    :param x: Numpy array which is copied and NOT updated inplace.
     :param prob: Float with the probability that an element is set to zero.
-    :return: A new Numpy array of the same shame as `a`.
+    :return: A new Numpy array of the same shape as `x`.
     """
-    # Array with random values between [0,1].
-    p = rng.uniform(size=a.shape)
-
-    # Create a copy of the input array where random values are set to zero.
-    return np.where(p < prob, 0, a)
+    return rand_where(rng=rng, x=x, y=0, prob=prob)
 
 ###############################################################################
 # Random portfolio groups.

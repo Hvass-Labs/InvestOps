@@ -79,7 +79,7 @@ def test_full_exposure_sparse_rand():
         prob_sparse = _rng.uniform()
 
         # Randomly set some of the matrix elements to zero.
-        corr_dense = rand_zero(rng=_rng, a=corr_dense, prob=prob_sparse)
+        corr_dense = rand_zero(rng=_rng, x=corr_dense, prob=prob_sparse)
 
         # Make the correlation matrix symmetrical again.
         corr_dense += corr_dense.T
@@ -151,7 +151,7 @@ def test_diversify_weights_sparse_rand():
         prob_sparse = _rng.uniform()
 
         # Randomly set some of the matrix elements to zero.
-        corr_dense = rand_zero(rng=_rng, a=corr_dense, prob=prob_sparse)
+        corr_dense = rand_zero(rng=_rng, x=corr_dense, prob=prob_sparse)
 
         # Make the correlation matrix symmetrical again.
         corr_dense += corr_dense.T

@@ -2,6 +2,10 @@
 
 ## Version 0.3.0 (2022-02-???)
 
+New features:
+
+- Function `random.rand_where`
+
 Changes:
 
 - Selection of parallel vs. serial execution in `diversify.py`
