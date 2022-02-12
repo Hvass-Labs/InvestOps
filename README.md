@@ -13,10 +13,14 @@ including the following:
 - Portfolio diversification using the so-called "Hvass Diversification"
   algorithm, which is extremely fast to compute and very robust to estimation
   errors in the correlation matrix.
-  ([Tutorial](https://github.com/Hvass-Labs/InvestOps-Tutorials/blob/master/01_Portfolio_Diversification.ipynb))
+  ([Tutorial](https://github.com/Hvass-Labs/InvestOps-Tutorials/blob/master/Portfolio_Diversification.ipynb))
   ([Paper](https://ssrn.com/abstract=3942552))
 
-The InvestOps Python package is a distilled version of some of the research
+- Portfolio Group Constraints.
+  ([Tutorial](https://github.com/Hvass-Labs/InvestOps-Tutorials/blob/master/Portfolio_Group_Constraints.ipynb))
+  ([Paper](https://ssrn.com/abstract=4033243))
+
+- The InvestOps Python package is a distilled version of some of the research
 from the [FinanceOps](https://github.com/Hvass-Labs/FinanceOps) project,
 whose papers can be found on [SSRN](http://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=1993051)
 and [GitHub](https://github.com/Hvass-Labs/Finance-Papers).
