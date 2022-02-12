@@ -1,9 +1,11 @@
 # Changes to the InvestOps Python package
 
-## Version 0.3.0 (2022-02-???)
+## Version 0.3.0 (2022-02-12)
 
 New features:
 
+- Portfolio group constraints (`group_constraints.py`)
+- Generate random portfolio groups (`random.py`)
 - Function `random.rand_where`
 
 Changes:
