@@ -15,7 +15,7 @@
 ###############################################################################
 
 from investops.diversify import full_exposure, diversify_weights
-from investops.random import rand_weights_normal, rand_corr_normal
+from investops.random import rand_normal, rand_corr_normal
 import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
 from tests.utils import assert_array_less_equal
@@ -91,8 +91,8 @@ def test_full_exposure_rand():
     """Test investops.diversify.full_exposure() with random data."""
     for i in range(_num_trials):
         # Random portfolio weights.
-        weights_org = rand_weights_normal(rng=_rng, num_assets=_num_assets,
-                                          min_weight=-1.0, max_weight=1.0)
+        weights_org = \
+            rand_normal(rng=_rng, size=_num_assets, low=-1.0, high=1.0)
 
         # Random correlation matrix.
         corr = rand_corr_normal(rng=_rng, num_assets=_num_assets)
@@ -168,8 +168,8 @@ def test_diversify_weights_rand():
     """Test investops.diversify.diversify_weights() with random data."""
     for i in range(_num_trials):
         # Random portfolio weights.
-        weights_org = rand_weights_normal(rng=_rng, num_assets=_num_assets,
-                                          min_weight=-1.0, max_weight=1.0)
+        weights_org = \
+            rand_normal(rng=_rng, size=_num_assets, low=-1.0, high=1.0)
 
         # Random correlation matrix.
         corr = rand_corr_normal(rng=_rng, num_assets=_num_assets)

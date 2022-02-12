@@ -17,7 +17,7 @@
 from investops.diversify import full_exposure, diversify_weights
 from investops.diversify_sparse import (full_exposure_sparse,
                                         diversify_weights_sparse)
-from investops.random import rand_weights_normal, rand_corr_normal, rand_zero
+from investops.random import rand_normal, rand_corr_normal, rand_zero
 from investops.check import fix_corr_matrix
 from investops.sparse import matrix_to_sparse
 import numpy as np
@@ -69,8 +69,8 @@ def test_full_exposure_sparse_rand():
     """Test investops.diversify.full_exposure_sparse() with random data."""
     for i in range(_num_trials):
         # Random portfolio weights.
-        weights_org = rand_weights_normal(rng=_rng, num_assets=_num_assets,
-                                          min_weight=-1.0, max_weight=1.0)
+        weights_org = \
+            rand_normal(rng=_rng, size=_num_assets, low=-1.0, high=1.0)
 
         # Random correlation matrix.
         corr_dense = rand_corr_normal(rng=_rng, num_assets=_num_assets)
@@ -141,8 +141,8 @@ def test_diversify_weights_sparse_rand():
     """Test investops.diversify.diversify_weights_sparse() with random data."""
     for i in range(_num_trials):
         # Random portfolio weights.
-        weights_org = rand_weights_normal(rng=_rng, num_assets=_num_assets,
-                                          min_weight=-1.0, max_weight=1.0)
+        weights_org = \
+            rand_normal(rng=_rng, size=_num_assets, low=-1.0, high=1.0)
 
         # Random correlation matrix.
         corr_dense = rand_corr_normal(rng=_rng, num_assets=_num_assets)

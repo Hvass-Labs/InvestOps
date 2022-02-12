@@ -14,7 +14,7 @@
 #
 ###############################################################################
 
-from investops.random import rand_weights_normal, rand_weights_uniform
+from investops.random import rand_normal, rand_uniform
 from investops.random import rand_corr_normal, rand_corr_uniform
 from investops.check import check_corr_matrix
 import numpy as np
@@ -39,8 +39,7 @@ _num_assets_max = 100
 
 def test_rand_weights():
     """
-    Test investops.random.rand_weights_normal()
-    and investops.random.rand_weights_uniform().
+    Test investops.random.rand_normal() and investops.random.rand_uniform().
     """
     # We only test that the random arrays have the correct shape and that
     # their elements are within the correct range. We do not check if the
@@ -62,10 +61,9 @@ def test_rand_weights():
         std = _rng.uniform(0.0, 1.0)
 
         # Random weights. Normal-distributed.
-        weights = rand_weights_normal(rng=_rng, num_assets=num_assets,
-                                      mean=mean, std=std,
-                                      min_weight=min_weight,
-                                      max_weight=max_weight)
+        weights = rand_normal(rng=_rng, size=num_assets,
+                              mean=mean, std=std,
+                              low=min_weight, high=max_weight)
 
         # Check shape of the array.
         msg_wrong_shape = 'Array `weights` has wrong shape.'
@@ -76,9 +74,8 @@ def test_rand_weights():
         assert_array_less_equal(min_weight, weights)
 
         # Random weights. Uniform-distributed.
-        weights = rand_weights_uniform(rng=_rng, num_assets=num_assets,
-                                       min_weight=min_weight,
-                                       max_weight=max_weight)
+        weights = rand_uniform(rng=_rng, size=num_assets,
+                               low=min_weight, high=max_weight)
 
         # Check shape of the array.
         msg_wrong_shape = 'Array `weights` has wrong shape.'

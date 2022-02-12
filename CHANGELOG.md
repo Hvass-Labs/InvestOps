@@ -12,6 +12,8 @@ Changes:
 
 Moved:
 
+- `rand_weights_uniform` to `rand_uniform`
+- `rand_weights_normal` to `rand_normal`
 - `diversify._check_weights` to `check.check_weights`
 
 

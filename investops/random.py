@@ -43,89 +43,157 @@ def gen_group_names(num_groups):
 ###############################################################################
 # Helper-functions.
 
-def _named_weights(weights, num_assets, names):
+def _get_size(size=None, index=None, columns=None):
     """
-    If `names` is not `None` then convert `weights` to a Pandas Series
-    either using the given list of asset-names, or generate default names.
+    Determine the desired array-size from the given arguments:
+    - If `index` is None, return the given `size.
+    - If `index` and `columns` are not None, return tuple with their lengths.
+    - If `index` is not None, return int with its length.
 
-    :param weights: Numpy array with portfolio weights.
-    :param num_assets: Integer with the number of assets.
-    :param names:
-        If `None` then don't use names for the weights.
-        If `True` then generate default names for the asset-weights.
-        If list then use those names for the asset-weights.
+    :param size: Int or tuple of ints.
+    :param index: List of strings with index-names.
+    :param columns: List of strings with column-names.
+    :return: Int or tuple with desired array-size.
+    """
+    # Check the arguments are valid.
+    if size is None and index is None:
+        msg = 'Arguments \'size\' and \'index\' cannot both be None.'
+        raise ValueError(msg)
+
+    # Determine the desired array-size.
+    if index is not None:
+        if columns is not None:
+            size = (len(index), len(columns))
+        else:
+            size = len(index)
+
+    return size
+
+
+def _named_values(values, index=None, columns=None):
+    """
+    Convert a Numpy array to either a Pandas Series or DataFrame,
+    depending on whether the `index` and `columns` are given.
+
+    :param values: Numpy array.
+    :param index: List of strings for the index-names.
+    :param columns: List of strings for the column-names.
     :return:
-        If `names` is `None` then a Numpy array, otherwise a Pandas Series.
+        - Numpy array if `index` is None.
+        - Pandas Series if `index is not None.
+        - Pandas DataFrame if both `index` and `columns` are not None.
     """
-    # Use names for the weights?
-    if names is not None:
-        if names is True:
-            # Use default asset-names.
-            names = gen_asset_names(num_assets=num_assets)
-        elif isinstance(names, list):
-            # Use the list of names as-is, assuming they are all strings.
-            # Check the number of names is correct.
-            if len(names) != num_assets:
-                msg = f'Argument \'names\' has wrong length {len(names)} ' \
-                      f'expected {num_assets}.'
-                raise ValueError(msg)
+    if index is not None:
+        if columns is not None:
+            # Convert to Pandas DataFrame.
+            values = pd.DataFrame(data=values, index=index, columns=columns)
+        else:
+            # Convert to Pandas Series.
+            values = pd.Series(data=values, index=index)
 
-        # Convert from Numpy array to Pandas Series.
-        weights = pd.Series(data=weights, index=names)
+    return values
 
-    return weights
 
 ###############################################################################
-# Random Weights.
+# Random numbers.
 
-def rand_weights_uniform(rng, num_assets,
-                         min_weight=0.0, max_weight=1.0, names=None):
+def rand_uniform(rng, low=0.0, high=1.0, size=None, index=None, columns=None):
     """
-    Generate random portfolio weights using a uniform distribution.
+    Generate random numbers from a uniform distribution between the given
+    `low` and `high`. The output is a Numpy array if only `size` is provided,
+    and a Pandas Series if `index` is provided, and a Pandas DataFrame if
+    both `index` and `columns` are provided.
 
-    :param rng: `Numpy.random.Generator` object from `np.random.default_rng()`
-    :param num_assets: Integer with the number of portfolio assets.
-    :param min_weight: Minimum portfolio weight.
-    :param max_weight: Maximum portfolio weight.
-    :param names:
-        If `None` then don't use names for the weights.
-        If `True` then generate default names for the asset-weights.
-        If list then use those names for the asset-weights.
+    :param rng:
+        `Numpy.random.Generator` object from `np.random.default_rng()`
+
+    :param size:
+        Int or tuple of ints with the size of the array to generate.
+        This is only used if the argument `index` is None.
+
+    :param mean:
+        Float with the mean of the normal distribution.
+
+    :param std:
+        Float with the std.dev. of the normal distribution.
+
+    :param low:
+        Float with lower limit for the random numbers.
+
+    :param high:
+        Float with upper limit for the random numbers.
+
+    :param index:
+        List of strings with the index-names.
+
+    :param columns:
+        List of strings with the column-names.
+
     :return:
-        If `names` is `None` then return a Numpy array with random weights.
-        Otherwise return a Pandas Series with named random weights.
+        - Numpy array if `index` is None.
+        - Pandas Series if `index` is not None.
+        - Pandas DataFrame if both `index` and `columns` are not None.
     """
-    weights = rng.uniform(low=min_weight, high=max_weight, size=num_assets)
-    return _named_weights(weights=weights, num_assets=num_assets, names=names)
+    # Determine the size of the array we must generate.
+    size = _get_size(size=size, index=index, columns=columns)
+
+    # Generate Numpy array of random numbers.
+    values = rng.uniform(low=low, high=high, size=size)
+
+    # If necessary convert to Pandas data before returning the random data.
+    return _named_values(values=values, index=index, columns=columns)
 
 
-def rand_weights_normal(rng, num_assets, mean=0.0, std=0.04,
-                        min_weight=0.0, max_weight=1.0, names=None):
+def rand_normal(rng, mean=0.0, std=0.04, low=0.0, high=1.0,
+                size=None, index=None, columns=None):
     """
-    Generate random portfolio weights using a normal distribution that
-    are also clipped between the given `min_weight` and `max_weight`.
+    Generate random numbers from a normal distribution that are also clipped
+    between the given `low` and `high`. The output is a Numpy array if only
+    `size` is provided, and a Pandas Series if `index` is provided, and a
+    Pandas DataFrame if both `index` and `columns` are provided.
 
-    :param rng: `Numpy.random.Generator` object from `np.random.default_rng()`
-    :param num_assets: Integer with the number of portfolio assets.
-    :param mean: Mean of the normal distribution.
-    :param std: Std.dev. of the normal distribution.
-    :param min_weight: Minimum portfolio weight.
-    :param max_weight: Maximum portfolio weight.
-    :param names:
-        If `None` then don't use names for the weights.
-        If `True` then generate default names for the asset-weights.
-        If list then use those names for the asset-weights.
+    :param rng:
+        `Numpy.random.Generator` object from `np.random.default_rng()`
+
+    :param size:
+        Int or tuple of ints with the size of the array to generate.
+        This is only used if the argument `index` is None.
+
+    :param mean:
+        Float with the mean of the normal distribution.
+
+    :param std:
+        Float with the std.dev. of the normal distribution.
+
+    :param low:
+        Float with lower limit for the random numbers.
+
+    :param high:
+        Float with upper limit for the random numbers.
+
+    :param index:
+        List of strings with the index-names.
+
+    :param columns:
+        List of strings with the column-names.
+
     :return:
-        If `names` is `None` then return a Numpy array with random weights.
-        Otherwise return a Pandas Series with named random weights.
+        - Numpy array if `index` is None.
+        - Pandas Series if `index` is not None.
+        - Pandas DataFrame if both `index` and `columns` are not None.
     """
-    # Generate random portfolio weights.
-    weights = rng.normal(scale=std, loc=mean, size=num_assets)
+    # Determine the size of the array we must generate.
+    size = _get_size(size=size, index=index, columns=columns)
 
-    # Clip the portfolio weights.
-    weights = np.clip(weights, min_weight, max_weight)
+    # Generate Numpy array of random numbers.
+    values = rng.normal(scale=std, loc=mean, size=size)
 
-    return _named_weights(weights=weights, num_assets=num_assets, names=names)
+    # Clip the values?
+    if low is not None and high is not None:
+        values = np.clip(values, low, high)
+
+    # If necessary convert to Pandas data before returning the random data.
+    return _named_values(values=values, index=index, columns=columns)
 
 ###############################################################################
 # Random correlation matrices.
@@ -285,76 +353,5 @@ def rand_groups(rng, num_assets, num_groups,
         asset_to_groups[asset_name] = groups.tolist()
 
     return asset_to_groups
-
-
-def rand_group_lim_uniform(rng, num_groups,
-                           min_lim=0.0, max_lim=1.0, names=None):
-    """
-    Generate random portfolio group-limits using a uniform distribution.
-
-    This is intended to be used with the class `GroupConstraints`.
-
-    :param rng: `Numpy.random.Generator` object from `np.random.default_rng()`
-    :param num_groups: Integer with the number of portfolio groups.
-    :param min_lim: Minimum group-limit.
-    :param max_lim: Maximum group-limit.
-    :param names:
-        If list then use those group-names, otherwise use default group-names.
-    :return: Pandas Series with random group-limits.
-    """
-    if not isinstance(names, list):
-        # Generate list of default group-names.
-        names = gen_group_names(num_groups=num_groups)
-    elif len(names) != num_groups:
-        # The list of given group-names has the wrong length.
-        msg = f'Argument \'names\' has wrong length {len(names)} ' \
-              f'expected {num_groups}.'
-        raise ValueError(msg)
-
-    # Generate random group-limits.
-    group_lim = rng.uniform(low=min_lim, high=max_lim, size=num_groups)
-
-    # Convert Numpy array to Pandas Series.
-    group_lim = pd.Series(data=group_lim, index=names)
-
-    return group_lim
-
-
-def rand_group_lim_normal(rng, num_groups, mean=0.0, std=0.04,
-                          min_lim=0.0, max_lim=1.0, names=None):
-    """
-    Generate random portfolio group-limits using a normal distribution.
-
-    This is intended to be used with the class `GroupConstraints`.
-
-    :param rng: `Numpy.random.Generator` object from `np.random.default_rng()`
-    :param num_groups: Integer with the number of portfolio groups.
-    :param mean: Mean of the normal distribution.
-    :param std: Std.dev. of the normal distribution.
-    :param min_lim: Minimum group-limit.
-    :param max_lim: Maximum group-limit.
-    :param names:
-        If list then use those group-names, otherwise use default group-names.
-    :return: Pandas Series with random group-limits.
-    """
-    if not isinstance(names, list):
-        # Generate list of default group-names.
-        names = gen_group_names(num_groups=num_groups)
-    elif len(names) != num_groups:
-        # The list of given group-names has the wrong length.
-        msg = f'Argument \'names\' has wrong length {len(names)} ' \
-              f'expected {num_groups}.'
-        raise ValueError(msg)
-
-    # Generate random group-limits.
-    group_lim = rng.normal(scale=std, loc=mean, size=num_groups)
-
-    # Clip the group-limits.
-    group_lim = np.clip(group_lim, min_lim, max_lim)
-
-    # Convert Numpy array to Pandas Series.
-    group_lim = pd.Series(data=group_lim, index=names)
-
-    return group_lim
 
 ###############################################################################
