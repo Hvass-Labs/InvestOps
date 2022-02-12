@@ -20,7 +20,7 @@ including the following:
   ([Tutorial](https://github.com/Hvass-Labs/InvestOps-Tutorials/blob/master/Portfolio_Group_Constraints.ipynb))
   ([Paper](https://ssrn.com/abstract=4033243))
 
-- The InvestOps Python package is a distilled version of some of the research
+The InvestOps Python package is a distilled version of some of the research
 from the [FinanceOps](https://github.com/Hvass-Labs/FinanceOps) project,
 whose papers can be found on [SSRN](http://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=1993051)
 and [GitHub](https://github.com/Hvass-Labs/Finance-Papers).
