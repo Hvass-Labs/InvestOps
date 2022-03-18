@@ -1,5 +1,12 @@
 # Changes to the InvestOps Python package
 
+## Version 0.4.0 (2022-???)
+
+New features:
+
+- Functions `rel_change` and `mean_rel_change` (`rel_change.py`)
+
+
 ## Version 0.3.0 (2022-02-12)
 
 New features:
