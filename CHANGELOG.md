@@ -1,9 +1,10 @@
 # Changes to the InvestOps Python package
 
-## Version 0.4.0 (2022-???)
+## Version 0.4.0 (2022-03-19)
 
 New features:
 
+- Class `StockForecast` (`stock_forecast.py`)
 - Functions `rel_change` and `mean_rel_change` (`rel_change.py`)
 
 
