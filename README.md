@@ -10,6 +10,10 @@ Original author is [Magnus Erik Hvass Pedersen](http://www.hvass-labs.org)
 This is a Python package with simple and effective tools for investing,
 including the following:
 
+- Long-Term Stock Forecasting.
+  ([Tutorial](https://github.com/Hvass-Labs/InvestOps-Tutorials/blob/master/Long-Term_Stock_Forecasting.ipynb))
+  ([Paper](https://ssrn.com/abstract=3750775))
+
 - Portfolio diversification using the so-called "Hvass Diversification"
   algorithm, which is extremely fast to compute and very robust to estimation
   errors in the correlation matrix.
